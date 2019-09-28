@@ -1,0 +1,15 @@
+{
+    "Awesome Album": {
+        "Artist": "The Weeknd",
+        "Album": "Starboy",
+        "Best Song": "Starboy (feat. Daft Punk)"
+    },
+    "Spectacular Quote": {
+        "Author": "GAIVS IVLIVS CAESAR",
+        "Quote": "VENI VEDI VICI"
+    },
+    "Wonderful Book": {
+        "Author": "J.K. Rowling",
+        "Title": "Harry Potter and the Sorcerer's Stone"
+    }
+}
