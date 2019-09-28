@@ -1,0 +1,58 @@
+= ConvertFrom-ScriptSettings
+:author: Oscar Guillermo Castro Jr.
+:revdate: September 26, 2019
+:source-highlighter: rouge
+:rouge-theme: gruvbox
+
+== Summary
+AppSettings but for PowerShell!
+
+Converts a `scriptsettings` file to an IConfiguration object for use in PowerShell.
+ScriptSettings is based off C#'s `AppSettings.json`.
+The codebase uses similar code that ASP .NET Core projects use.
+See the example below for clarity on how to access values in the scriptsettings file.
+
+[source, powershell]
+.ScriptSettings Usage
+----
+<#
+    scriptsettings.json
+    {
+        "USA": 1776
+        "Nuget": {
+            "Source": "example.com/feed"
+        },
+        "Cool Movies": [
+            "Harry Potter Series",
+            "Stuber",
+            "IT Chapter Two"
+        ]
+    }
+#>
+$config = ConvertFrom-ScriptSettings
+
+$usaYear = $config["USA"] # typical access (value: 1776)
+$feed = $config["Nuget:Source"] # Nested key-value pair (value: 'example.com/feed')
+$itMovie = $config["Cool Movies:2"] # Access an array (value: 'IT Chapter Two')
+----
+
+== Project Organization
+The project is organized into two primary folders, 'tests' and 'source'.
+After the `build.ps1` and `publish.ps1` scripts are ran, other folders are made.
+
+Folders
+    . Builds - contains builds
+    . source - contains source code
+    . tests - contains test code
+
+=== Build.ps1
+Builds the project into the 'builds' folder.
+Requires that the scriptsettings file include the Module version and the Nuget source for publishing to Github Package Registry.
+
+=== Publish.ps1
+As of September 2019, Publish-Module does not include major support for publishing modules to the Github Package Registry.
+In that vein, I've setup a hack-ish script to publish to the registry.
+The solution involves publishing to a local repository and pushing that nupkg.
+
+=== Test.ps1
+Invokes pester tests in the 'tests' folder.

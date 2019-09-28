@@ -353,5 +353,13 @@ MigrationBackup/
 *.DS_Store
 
 # Let's not commit production, local, and development keys
+### Don't need to gitignore these for now.
 appsettings.*.json
 scriptsettings.*.json
+
+# Don't upload temporary Nuget feeds.
+packages/
+
+# Built modules except a stable version for tooling.
+builds/**/
+!builds/dev/

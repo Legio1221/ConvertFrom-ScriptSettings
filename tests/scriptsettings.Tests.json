@@ -1,7 +1,12 @@
 {
     "Awesome Album": {
         "Artist": "Post Malone",
-        "Album": "Hollwood's Bleeding",
+        "Album": "Hollywood's Bleeding",
         "Best Song": "Circles"
-    }
+    },
+    "Fictitious Integers": [
+        12345,
+        67890,
+        1221
+    ]
 }
