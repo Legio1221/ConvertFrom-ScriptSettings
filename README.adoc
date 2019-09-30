@@ -12,6 +12,22 @@ ScriptSettings is based off C#'s `AppSettings.json`.
 The codebase uses similar code that ASP .NET Core projects use.
 See the example below for clarity on how to access values in the scriptsettings file.
 
+== Usage
+
+ScriptSettings depends on the `POWERSHELLCORE_ENVIRONMENT` variable to load the correct file.
+At most, ScriptSettings will load 3 JSON files; the default scriptsettings.json, scriptsettings.<environment>.json, and a specified JSON file.
+The specified file has the highest precedence, followed by the environment variable set file, and finally the default file.
+
+The cmdlet wll search the current working directory for a scriptsettings.json file. If the environmental variable is set, the cmdlet will attempt to load a scriptsettings.<environment>.json file.
+Both of these files are optional and will not cause the cmdlet to throw an exception.
+
+NOTE:  If a JSON file is specified, the file must be present!
+
+.Precedence (in descending order)
+    . Specified JSON file
+    . scriptsettings.<environment>.json
+    . scriptsettings.json
+
 [source, powershell]
 .ScriptSettings Usage
 ----
@@ -26,14 +42,37 @@ See the example below for clarity on how to access values in the scriptsettings 
             "Harry Potter Series",
             "Stuber",
             "IT Chapter Two"
-        ]
+        ],
+        "Cool API Key": "cool-api-key",
+        "Quotes": {
+            "Caesar": "The fault, dear Brutus, is not in our stars, but in ourselves."
+        }
     }
+
+    $env:POWERSHELLCORE_ENVIRONMENT = Development
+    scriptsettings.Development.json
+    {
+        "Cool API Key": "super-cool-api-key",
+        "Quotes": {
+            "Caesar": "Beware the ides of March."
+        }
+    }
+
+    scriptsettings.Foo.json (Specified file, could be named anything but must have JSON extension)
+    {
+        Quotes: {
+            "Caesar": "Et tu, Brute?"
+        }
+    }
+
 #>
-$config = ConvertFrom-ScriptSettings
+$config = ConvertFrom-ScriptSettings -ScriptSettingsFile "./scriptsettings.Foo.json"
 
 $usaYear = $config["USA"] # typical access (value: 1776)
 $feed = $config["Nuget:Source"] # Nested key-value pair (value: 'example.com/feed')
 $itMovie = $config["Cool Movies:2"] # Access an array (value: 'IT Chapter Two')
+$apiKey = $config["Cool API Key"] # Environment variable based file has greater precedence than the default (value: "super-cool-api-key")
+$quote = $config["Quotes:Caesar"] # Specified file has highest precedence (value: "Et tu , Brute?")
 ----
 
 == Project Organization
