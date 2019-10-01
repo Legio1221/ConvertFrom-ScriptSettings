@@ -30,7 +30,7 @@ $moduleFolder = "$PSScriptRoot/builds/$version/$module"
 try 
 {
     $output = "$moduleFolder/bin"
-    dotnet publish --output $output # dotnet-publish publishes the output directory relative to the csproj's path.
+    dotnet publish --output $output --configuration Release # dotnet-publish publishes the output directory relative to the csproj's path.
 }
 catch 
 {
@@ -42,16 +42,22 @@ catch
 # # ------------------------------------------------------
 $manifestName = "ConvertFrom-ScriptSettings.psd1"
 $moduleRootName = "ConvertFrom-ScriptSettings.psm1"
+$importNecessaryDllsScript = "ImportNecessaryDLLs.ps1"
+$importNecessaryDllsScriptPath = "$PSScriptRoot/tools/$importNecessaryDllsScript"
+$importDllsModule = "Import-DLLs.psm1"
+$importDllsModulePath = "$PSScriptRoot/tools/$importDllsModule"
 
 New-Item -Path $moduleFolder -Name "$moduleRootName" -ItemType "file" -Value "# Purposefully empty, reserved for future use."
+Copy-Item -Path $importNecessaryDllsScriptPath -Destination "$moduleFolder/$importNecessaryDllsScript"
+Copy-Item -Path $importDllsModulePath -Destination "$moduleFolder/$importDllsModule"
 
-$binFolder = Get-ChildItem -Path $output
+#$binFolder = Get-ChildItem -Path $output
 
-$files = @()
+<# $files = @()
 foreach($file in $binFolder)
 {
     $files += "bin/$($file.Name)"
-}
+} #>
 
 $manifestArguments = @{
     Path = "$moduleFolder/$manifestName"
@@ -60,8 +66,9 @@ $manifestArguments = @{
     ModuleVersion = "$version"
     CompanyName = "Jimenez & Associates"
     Description = "Simple AppSettings for PowerShell"
-    RequiredAssemblies = $files
-    NestedModules = "bin/scriptsettings.dll"
+    ScriptsToProcess = $importDllsScript
+    #RequiredAssemblies = $files
+    NestedModules = @("bin/scriptsettings.dll", "Import-DLLs.psm1")
     ProjectUri = "https://github.com/Legio1221/ConvertFrom-ScriptSettings"
 }
 
